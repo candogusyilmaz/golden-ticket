@@ -1,5 +1,6 @@
-package com.golden.ticket.exception;
+package com.golden.ticket.rest;
 
+import com.golden.ticket.exception.BaseException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

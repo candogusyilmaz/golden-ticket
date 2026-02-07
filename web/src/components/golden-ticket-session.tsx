@@ -12,7 +12,7 @@ export function GoldenTicketSession({
 }) {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const queryClient = useQueryClient();
-  const quantity = useRemainingQuantity(sessionId);
+  const { remainingQuantity, status } = useRemainingQuantity(sessionId);
   const [purchaseCount, setPurchaseCount] = useState(0);
 
   const mutation = $api.useMutation("post", "/api/buy", {
@@ -51,47 +51,58 @@ export function GoldenTicketSession({
         </button>
       </div>
 
-      <div className={`ticket-card ${quantity === 0 ? "sold-out" : ""}`}>
+      <div
+        className={`ticket-card ${remainingQuantity === 0 ? "sold-out" : ""}`}
+      >
         <h2 className="ticket-title">Golden Ticket</h2>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            fontSize: "0.6rem",
-            fontWeight: "bold",
-          }}
-        >
-          <span>ADMIT ONE</span>
-          <span>VALUED AT $500</span>
+      </div>
+
+      {status === "success" && (
+        <div className="inventory-status">
+          <div
+            className={`qty-text ${remainingQuantity! <= 2 && remainingQuantity! > 0 ? "low" : ""}`}
+          >
+            {remainingQuantity! > 0
+              ? `${remainingQuantity} Tickets Left`
+              : "SOLD OUT"}
+          </div>
         </div>
-      </div>
+      )}
 
-      <div className="inventory-status">
-        <div
-          className={`qty-text ${quantity <= 2 && quantity > 0 ? "low" : ""}`}
-        >
-          {quantity > 0 ? `${quantity} Tickets Left` : "SOLD OUT"}
+      {status === "error" && (
+        <div className="inventory-status">
+          <div className={`qty-text sold-out`}>
+            Error while loading inventory
+          </div>
         </div>
-      </div>
+      )}
 
-      <div className="purchase-controls">
-        <button
-          className="buy-button"
-          onClick={handleBuy}
-          disabled={mutation.isPending || quantity === 0}
-        >
-          {mutation.isPending
-            ? "Verifying..."
-            : quantity > 0
-              ? "Buy Now"
-              : "Out of Stock"}
-        </button>
+      {status === "pending" && (
+        <div className="inventory-status">
+          <div className={`qty-text`}>Loading inventory...</div>
+        </div>
+      )}
 
-        {errorMsg && <div className="error-toast">{errorMsg}</div>}
-        {purchaseCount > 0 && !errorMsg && (
-          <span className="success-badge">Owned: {purchaseCount}</span>
-        )}
-      </div>
+      {status === "success" && (
+        <div className="purchase-controls">
+          <button
+            className="buy-button"
+            onClick={handleBuy}
+            disabled={mutation.isPending || remainingQuantity === 0}
+          >
+            {mutation.isPending
+              ? "Verifying..."
+              : remainingQuantity! > 0
+                ? "Buy Now"
+                : "Out of Stock"}
+          </button>
+
+          {errorMsg && <div className="error-toast">{errorMsg}</div>}
+          {purchaseCount > 0 && !errorMsg && (
+            <span className="success-badge">Owned: {purchaseCount}</span>
+          )}
+        </div>
+      )}
     </div>
   );
 }
