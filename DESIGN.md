@@ -80,10 +80,13 @@ This test validates that the database-level atomic update strategy works correct
 
 ## Candidate Notes &amp; Run Instructions
 
+Clone the repository and follow the instructions below to run the application locally.
+`git clone https://github.com/candogusyilmaz/golden-ticket.git`
+
 ### How to run (back-end) (java spring-boot maven)
-1. Clone the repository
-2. Move into the backend directory `cd server`
-3. Run `mvn spring-boot:run` to start the server
+1. Move into the backend directory `cd server`
+2. Run `mvn spring-boot:run` to start the server
+3. The server will be running at http://localhost:8080
 
 ### How to run (front-end) (react)
 1. Move into the frontend directory `cd web`
